@@ -10,8 +10,8 @@ class Array {
 class IntBag {
   int[] bag, arr;
   int size = 4;
-  int elCount = 0;
-  int r;
+  int elCount = 0;//element count
+  int r;//return value for removeAt 
   IntBag() {
     arr = new int[size];
   }
@@ -54,6 +54,7 @@ class IntBag {
     arr[l] = tempv1;
     ++elCount;
   }
+  //removes value at index and inserts last element to the index
   int removeAt(int index){
     if(index < elCount){
       r = arr[index];
@@ -88,6 +89,7 @@ class IntBag {
   }
 }
 
+//sole purpose is testing
 class Main{
   public static void main(String[] args) {
     IntBag test = new IntBag();
