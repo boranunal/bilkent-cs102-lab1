@@ -1,18 +1,33 @@
 import java.util.Scanner;
-class Array {
-  public static void prIntArray(int[] arr){
-    for(int i : arr)
-      System.out.print(i+" ");
-    System.out.println("\n");
-  }
 
+class CharBag {
+  int size = 4;
+  int elCount = 0;
+  char[] str = new char[size];
+  void add(char c) {
+    if(elCount == size)
+      expand();
+    str[elCount] = c;
+    ++elCount;
+  }
+  private void expand() {
+    char[] tempCArr = new char[size*2];
+    System.arraycopy(str, 0, tempCArr, 0, size);
+    size *= 2;
+    str = tempCArr;
+  }
 }
 class IntBag {
   int[] bag, arr;
-  int size = 4;
-  int elCount = 0;//element count
-  int r;//return value for removeAt 
+  int size;
+  int elCount = 0;
+  int r;
   IntBag() {
+    size = 4;
+    arr = new int[size];
+  }
+  IntBag(int s) {
+    size = s;
     arr = new int[size];
   }
   void add(int val){
@@ -20,8 +35,11 @@ class IntBag {
       expand();
     arr[elCount] = val;
     ++elCount;
+    if(elCount == size)
+      expand();
+    arr[elCount] = -1;
   }
-  void expand() {
+  private void expand() {
     int[] tempArr = new int[size*2];
     System.arraycopy(arr, 0, tempArr, 0, size);
     size *= 2;
@@ -54,7 +72,6 @@ class IntBag {
     arr[l] = tempv1;
     ++elCount;
   }
-  //removes value at index and inserts last element to the index
   int removeAt(int index){
     if(index < elCount){
       r = arr[index];
@@ -77,6 +94,23 @@ class IntBag {
     }
     return false;
   }
+  String toStr() {
+    int q;
+    CharBag bruh = new CharBag();
+    for(int i = 0; i < elCount; ++i){
+      CharBag temp = new CharBag();
+      q = arr[i];
+      do {
+        temp.add((char) (q % 10 + '0'));
+        q /= 10;
+      } while (q != 0);
+      for(int j = temp.elCount-1; 0 <= j; --j)
+        bruh.add(temp.str[j]);
+      bruh.add(' ');
+    }
+    String string = new String(bruh.str);
+    return string;
+  }
   int size() {
     return elCount;
   }
@@ -87,33 +121,85 @@ class IntBag {
       System.out.println("valueAt: given index is not within boundaries");
       return -1;
   }
+  void removeAll(int x) {
+    int i = 0;
+    while(i < elCount) {
+      if(arr[i] == x)
+        arr[i] = arr[(elCount--)-1];
+      else ++i;
+    }
+  }
 }
 
-//sole purpose is testing
 class Main{
   public static void main(String[] args) {
-    IntBag test = new IntBag();
-    Scanner scan = new Scanner(System.in);
-    int var;
+    IntBag object = new IntBag();
+    int opt = 0;
     while(true) {
-      var = scan.nextInt();
-      if(var == 0)
-        break;
-      test.add(var);
+      System.out.println("1.Create a new empty collection(any previous values are lost!)\n2.Read a set of positive values into the collection (use zero to indicate all the values have been entered.)\n3.Print the collection of values.\n4.Add a value to the collection of values at a specified location.\n5.Remove the value at a specified location from the collection of values.\n6.Remove all instances of a value within the collection* (see note below).\n7.Quit the program.\n");
+      opt = Menu.readInt();
+      if (opt == 7) break;
+      switch (opt) {
+        case 1:
+          IntBag tempobj = new IntBag();
+          object = tempobj;
+          break;
+        case 2:
+          Menu.read(object);
+          break;
+        case 3:
+          System.out.println(object.toStr());
+          break;
+        case 4:
+          System.out.println("Enter value - index:  ");
+          object.addTo(Menu.readInt(),Menu.readInt());
+          break;
+        case 5:
+          System.out.println("Enter index:  ");
+          object.removeAt(Menu.readInt());
+          break;
+        case 6:
+          System.out.println("Enter the value to be removed:  ");
+          object.removeAll(Menu.readInt());
+         break;
+        default:
+          System.out.println("Enter a valid number");
+      }
     }
+  }
+}
 
-    Array.prIntArray(test.arr);
-    test.addTo(9,2);
-    Array.prIntArray(test.arr);
-    int removed = test.removeAt(2);
-    Array.prIntArray(test.arr);
-    System.out.println("removed: " + removed);
-    System.out.println("array size: " + test.size());
-    System.out.println("value at index 2: " + test.valueAt(2));
-    if(test.search(7))
-      System.out.println("array contains 7");
-    else
-      System.out.println("array does not contain 7");
+class Fibonacci {
+  public static void fibonacci(int range) {
+    IntBag fibo = new IntBag();
+    int j = 0;
+    range -= 2;
+    fibo.add(0);
+    fibo.add(1);
+    while(j<range)
+      fibo.add(fibo.arr[j] + fibo.arr[(j++)+1]);
+    System.out.println(fibo.toStr());
+  }
+}
 
+class Menu {
+
+  static int readInt() {
+    Scanner scan = new Scanner(System.in);
+    int val=0;
+    if(scan.hasNextInt())
+      val = scan.nextInt();
+    scan.close();
+    return val;
+  }
+  static void read(IntBag obj) {
+    Scanner input = new Scanner(System.in);
+    int var;
+    while(input.hasNextInt()) {
+      var = input.nextInt();
+      if(var == 0) break;
+      obj.add(var);
+    }
+    input.close();
   }
 }
