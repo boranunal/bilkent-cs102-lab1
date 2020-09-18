@@ -45,11 +45,7 @@ class IntBag {
     size *= 2;
     arr = tempArr;
   }
-  void contract() {
-    int[] tempArr = new int[size/2];
-    System.arraycopy(arr, 0, tempArr, 0, elCount);
-    size /= 2;
-    arr = tempArr;
+
   }
   void addTo(int value, int index) {
     int tempv1, tempv2;
@@ -78,8 +74,6 @@ class IntBag {
       arr[index] = arr[elCount-1];
       arr[elCount-1] = 0;
       --elCount;
-      if(elCount == size/2)
-        contract();
       return r;
     }
     else
@@ -135,9 +129,12 @@ class Main{
   public static void main(String[] args) {
     IntBag object = new IntBag();
     int opt = 0;
+    int val;
     while(true) {
       System.out.println("1.Create a new empty collection(any previous values are lost!)\n2.Read a set of positive values into the collection (use zero to indicate all the values have been entered.)\n3.Print the collection of values.\n4.Add a value to the collection of values at a specified location.\n5.Remove the value at a specified location from the collection of values.\n6.Remove all instances of a value within the collection* (see note below).\n7.Quit the program.\n");
-      opt = Menu.readInt();
+      Scanner input = new Scanner(System.in);
+      opt = input.nextInt();
+      input.close();
       if (opt == 7) break;
       switch (opt) {
         case 1:
@@ -145,7 +142,12 @@ class Main{
           object = tempobj;
           break;
         case 2:
-          Menu.read(object);
+          Scanner input = new Scanner(System.in);
+          while(true) {
+            val = input.nextInt();
+            if(val == 0) break;
+            object.add(val);
+          }
           break;
         case 3:
           System.out.println(object.toStr());
@@ -179,27 +181,5 @@ class Fibonacci {
     while(j<range)
       fibo.add(fibo.arr[j] + fibo.arr[(j++)+1]);
     System.out.println(fibo.toStr());
-  }
-}
-
-class Menu {
-
-  static int readInt() {
-    Scanner scan = new Scanner(System.in);
-    int val=0;
-    if(scan.hasNextInt())
-      val = scan.nextInt();
-    scan.close();
-    return val;
-  }
-  static void read(IntBag obj) {
-    Scanner input = new Scanner(System.in);
-    int var;
-    while(input.hasNextInt()) {
-      var = input.nextInt();
-      if(var == 0) break;
-      obj.add(var);
-    }
-    input.close();
   }
 }
